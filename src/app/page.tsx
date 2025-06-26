@@ -2,13 +2,23 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSupabase } from '@/components/providers/supabase-provider'
 
 export default function Home() {
   const router = useRouter()
+  const { user, isLoading } = useSupabase()
 
   useEffect(() => {
-    router.replace('/auth/login')
-  }, [router])
+    if (!isLoading) {
+      if (user) {
+        // ログイン済みの場合はダッシュボードへ
+        router.replace('/dashboard')
+      } else {
+        // 未ログインの場合はログインページへ
+        router.replace('/auth/login')
+      }
+    }
+  }, [user, isLoading, router])
 
   return (
     <div className="flex min-h-screen items-center justify-center">

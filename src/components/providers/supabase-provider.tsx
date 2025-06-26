@@ -22,17 +22,13 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state change:', { event, session: !!session, user: session?.user?.email })
       setUser(session?.user ?? null)
       setIsLoading(false)
       
       if (event === 'SIGNED_IN') {
-        console.log('User signed in, attempting navigation to dashboard')
-        router.push('/dashboard')
         router.refresh()
       }
       if (event === 'SIGNED_OUT') {
-        console.log('User signed out, navigating to login')
         router.push('/auth/login')
       }
     })
