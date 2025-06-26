@@ -38,8 +38,8 @@ export default function LoginPage() {
         router.push('/dashboard')
         router.refresh()
       }
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error) {
+      setError(error instanceof Error ? error.message : '認証エラーが発生しました')
     } finally {
       setIsLoading(false)
     }
