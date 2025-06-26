@@ -38,7 +38,7 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       
       // ユーザープロファイルが存在しない場合は作成
       if (user) {
-        const { data: profile, error } = await supabase
+        const { error } = await supabase
           .from('users')
           .select('*')
           .eq('id', user.id)
