@@ -37,8 +37,30 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
       }
     })
 
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       setUser(user)
+      
+      // ユーザープロファイルが存在しない場合は作成
+      if (user) {
+        const { data: profile, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+        
+        if (error && error.code === 'PGRST116') {
+          // ユーザープロファイルが存在しない場合は作成
+          console.log('Creating user profile for:', user.email)
+          await supabase
+            .from('users')
+            .insert({
+              id: user.id,
+              email: user.email!,
+              name: user.user_metadata?.name || user.email?.split('@')[0]
+            })
+        }
+      }
+      
       setIsLoading(false)
     })
 
