@@ -40,6 +40,8 @@ export default function ProjectsPage() {
     e.preventDefault()
     if (!user) return
 
+    console.log('Creating project with user:', user.id)
+    
     const { data, error } = await supabase
       .from('projects')
       .insert({
@@ -51,7 +53,11 @@ export default function ProjectsPage() {
       .select()
       .single()
 
-    if (!error && data) {
+    if (error) {
+      console.error('Project creation error:', error)
+      alert(`エラー: ${error.message}`)
+    } else if (data) {
+      console.log('Project created successfully:', data)
       setProjects([data, ...projects])
       setNewProject({ name: '', client_name: '', description: '' })
       setShowCreateForm(false)
