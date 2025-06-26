@@ -40,8 +40,12 @@ export default function LoginPage() {
         console.log('Sign in result:', { data, error })
         if (error) throw error
         console.log('Sign in successful, redirecting...')
-        router.push('/dashboard')
-        router.refresh()
+        
+        // リダイレクト前に少し待機
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
+        // window.location を使用してリダイレクト
+        window.location.href = '/dashboard'
       }
     } catch (error) {
       console.error('Auth error:', error)
