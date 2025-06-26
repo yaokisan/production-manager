@@ -15,11 +15,13 @@ export default function LoginPage() {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('Form submitted', { email, password, isSignUp })
     setIsLoading(true)
     setError(null)
 
     try {
       if (isSignUp) {
+        console.log('Attempting sign up...')
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -30,15 +32,19 @@ export default function LoginPage() {
         if (error) throw error
         setError('確認メールを送信しました。メールを確認してください。')
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        console.log('Attempting sign in...')
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         })
+        console.log('Sign in result:', { data, error })
         if (error) throw error
+        console.log('Sign in successful, redirecting...')
         router.push('/dashboard')
         router.refresh()
       }
     } catch (error) {
+      console.error('Auth error:', error)
       setError(error instanceof Error ? error.message : '認証エラーが発生しました')
     } finally {
       setIsLoading(false)
@@ -99,6 +105,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
+              onClick={() => console.log('Button clicked')}
               className="group relative flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50"
             >
               {isLoading ? '処理中...' : isSignUp ? 'アカウント作成' : 'ログイン'}
