@@ -2,7 +2,7 @@
 
 import { AuthGuard } from '@/components/auth/auth-guard'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useSupabase } from '@/components/providers/supabase-provider'
 
@@ -12,12 +12,20 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const router = useRouter()
+  const pathname = usePathname()
   const supabase = createClient()
   const { user } = useSupabase()
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
     router.push('/auth/login')
+  }
+
+  const isActive = (path: string) => {
+    if (path === '/dashboard') {
+      return pathname === '/dashboard'
+    }
+    return pathname.startsWith(path)
   }
 
   return (
@@ -33,19 +41,31 @@ export default function DashboardLayout({
                 <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                   <Link
                     href="/dashboard"
-                    className="inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
+                    className={`inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium ${
+                      isActive('/dashboard')
+                        ? 'border-indigo-500 text-gray-900'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                    }`}
                   >
                     ダッシュボード
                   </Link>
                   <Link
                     href="/dashboard/projects"
-                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                    className={`inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium ${
+                      isActive('/dashboard/projects')
+                        ? 'border-indigo-500 text-gray-900'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                    }`}
                   >
                     プロジェクト
                   </Link>
                   <Link
                     href="/dashboard/calendar"
-                    className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                    className={`inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium ${
+                      isActive('/dashboard/calendar')
+                        ? 'border-indigo-500 text-gray-900'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                    }`}
                   >
                     カレンダー
                   </Link>
